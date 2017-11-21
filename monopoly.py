@@ -41,7 +41,7 @@ squares = [
     "Park Place",
     "Luxury Tax",
     "Boardwalk"
-    ]
+]
 SQUARES_LENGTH = len(squares)
 chance_cards = [
     "Advance to Go",
@@ -82,47 +82,48 @@ community_chest_cards = [
 def roll_dice():
     return [random.randint(1,6),random.randint(1,6)]
 
-def pick_card(player_pos, deck):
+def pick_card(player, deck):
     # Take a random card from either the chance or cc deck
     # and return players new position
     last_card = len(deck)-1
     choice = random.randint(0,last_card)
     card = deck[choice]
-    print("Started at: " + str(player_pos))
+    print("Started at: " + str(player["pos"]))
     if(card == "Advance to Go"):
-        player_pos = 0
+        player["pos"] = 0
     elif(card == "Advance to Illinois Ave."):
-        player_pos = 24
+        player["pos"] = 24
     elif(card == "Advance to St. Charles Place"):
-        player_pos = 11
+        player["pos"] = 11
     elif(card == "Advance token to nearest Utility"):
-        if(player_pos == 7):
-            player_pos = 12 # Electric Company
+        if(player["pos"] == 7):
+            player["pos"] = 12 # Electric Company
         else: # Pos 22 and 36 go to the same place
-            player_pos = 28 # Water Works
+            player["pos"] = 28 # Water Works
     elif(card == "Advance token to the nearest Railroad"):
-        if(player_pos == 7):
-            player_pos = 5 # Reading
-        elif(player_pos == 22):
-            player_pos = 25 # B and O
-        elif(player_pos == 36):
-            player_pos = 35 # Short Line
+        if(player["pos"] == 7):
+            player["pos"] = 5 # Reading
+        elif(player["pos"] == 22):
+            player["pos"] = 25 # B and O
+        elif(player["pos"] == 36):
+            player["pos"] = 35 # Short Line
     elif(card == "Go Back 3 Spaces"):
-        player_pos = player_pos - 3
+        player["pos"] = player["pos"] - 3
     elif(card == "Go to Jail"):
-        player_pos = 10
-        #TODO: remember that player is actually in jail!
+        player["pos"] = 10
+        player["in_jail"] = True
     elif(card == "Take a trip to Reading Railroad"):
-        player_pos = 5
+        player["pos"] = 5
     elif(card == "Take a walk on the Boardwalk"):
-        player_pos = 39
+        player["pos"] = 39
     print("Received card: " + card)
-    print("Ended at: " + str(player_pos))
-    return player_pos
+    print("Ended at: " + str(player["pos"]))
+    return player
 
 player1 = {
     "pos": 0,
-    "doubles_in_a_row": 0
+    "doubles_in_a_row": 0,
+    "in_jail": False
 }
 
 for turn in range(1,100):
@@ -138,9 +139,11 @@ for turn in range(1,100):
 
     if(squares[player1["pos"]] == "Chance"):
         print("chance!")
-        player1["pos"] = pick_card(player1["pos"], chance_cards)
+        print(player1)
+        pick_card(player1, chance_cards)
+        print(player1)
     if(squares[player1["pos"]] == "Community Chest"):
         print("CC!")
-        player1["pos"] = pick_card(player1["pos"], community_chest_cards)
+        pick_card(player1, community_chest_cards)
 
     print("Turn " + str(turn) + ": " + squares[player1["pos"]])
